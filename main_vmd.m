@@ -5,7 +5,7 @@ clc
 warning off
 
 %% read data
-data=xlsread('leiji.xlsx','Sheet1','B2:B91');  %例如：num=xlsread('demo1.xls','sheet2','B1:B20'), %读取demo1.xls文件sheet2中的B1到B20
+data=xlsread();  %例如：num=xlsread('demo1.xls','sheet2','B2:B156'), %读取demo1.xls文件sheet2中的B1到B20
 
 fs=60;
 
