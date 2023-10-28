@@ -1,37 +1,37 @@
-%% ÂéÈ¸ÓÅ»¯LSTM¶àÔª»Ø¹éÔ¤²â
+%% éº»é›€ä¼˜åŒ–LSTMå¤šå…ƒå›å½’é¢„æµ‹
 clc;clear;close all;format compact
 %%
-data=xlsread('predict_data_zhouqi_bodong.xlsx','bodong','B2:E91') %ĞèÒª´¦ÀíµÄÊı¾İ¼¯
+data=xlsread() %éœ€è¦å¤„ç†çš„æ•°æ®é›†
 x=data(:,1:4);
 y=data(:,5);
-method=@mapminmax;%¹éÒ»»¯
-% method=@mapstd;%±ê×¼»¯
+method=@mapminmax;%å½’ä¸€åŒ–
+% method=@mapstd;%æ ‡å‡†åŒ–
 [xs,mappingx]=method(x');x=xs';
 [ys,mappingy]=method(y');y=ys';
 
-%»®·ÖÊı¾İ
+%åˆ’åˆ†æ•°æ®
 n=size(x,1);
-m=round(n*0.7);%Ç°70%ÑµÁ· ºó30%²âÊÔ
+m=round(n*0.8);%å‰80%è®­ç»ƒ å20%æµ‹è¯•
 XTrain=x(1:m,:)';
 XTest=x(m+1:end,:)';
 YTrain=y(1:m,:)';
 YTest=y(m+1:end,:)';
-%% ²ÉÓÃssaÓÅ»¯
-[x ,fit_gen,process]=ssaforlstm(XTrain,YTrain,XTest,YTest);%·Ö±ğ¶ÔÒşº¬²ã½Úµã ÑµÁ·´ÎÊıÓëÑ§Ï°ÂÊÑ°ÓÅ
+%% é‡‡ç”¨ssaä¼˜åŒ–
+[x ,fit_gen,process]=ssaforlstm(XTrain,YTrain,XTest,YTest);%åˆ†åˆ«å¯¹éšå«å±‚èŠ‚ç‚¹ è®­ç»ƒæ¬¡æ•°ä¸å­¦ä¹ ç‡å¯»ä¼˜
 
-%% »­ÊÊÓ¦¶ÈÇúÏß
+%% ç”»é€‚åº”åº¦æ›²çº¿
 plfit(fit_gen,'SSA')
-disp('ÓÅ»¯µÄ³¬²ÎÊıÎª£º')
+disp('ä¼˜åŒ–çš„è¶…å‚æ•°ä¸ºï¼š')
 disp('L1:'),x(1)
 disp('L2:'),x(2)
 disp('K:'),x(3)
 disp('lr:'),x(4)
 
-%% ÀûÓÃÓÅ»¯µÃµ½µÄ²ÎÊıÖØĞÂÑµÁ·
-train=0;%ÊÇ·ñÖØĞÂÑµÁ·
+%% åˆ©ç”¨ä¼˜åŒ–å¾—åˆ°çš„å‚æ•°é‡æ–°è®­ç»ƒ
+train=0;%æ˜¯å¦é‡æ–°è®­ç»ƒ
     rng(0)
-    numFeatures = size(XTrain,1);%ÊäÈë½ÚµãÊı
-    numResponses = size(YTrain,1);%Êä³ö½ÚµãÊı
+    numFeatures = size(XTrain,1);%è¾“å…¥èŠ‚ç‚¹æ•°
+    numResponses = size(YTrain,1);%è¾“å‡ºèŠ‚ç‚¹æ•°
     miniBatchSize = 20; %batchsize
     numHiddenUnits1 = x(1);
     numHiddenUnits2 = x(2);
@@ -53,24 +53,24 @@ train=0;%ÊÇ·ñÖØĞÂÑµÁ·
         'Plots','training-progress');
 
 net = trainNetwork(XTrain,YTrain,layers,options);
-%% Ô¤²â
+%% é¢„æµ‹
 YPred = predict(net,XTest);
 YPred=double(YPred);
-% ·´¹éÒ»»¯
+% åå½’ä¸€åŒ–
 predict_value=method('reverse',YPred,mappingy);
 true_value=method('reverse',YTest,mappingy);
 %%
-disp('½á¹û·ÖÎö')
+disp('ç»“æœåˆ†æ')
 rmse=sqrt(mean((true_value-predict_value).^2));
-disp(['¸ù¾ù·½²î(RMSE)£º',num2str(rmse)])
+disp(['æ ¹å‡æ–¹å·®(RMSE)ï¼š',num2str(rmse)])
 
 mae=mean(abs(true_value-predict_value));
-disp(['Æ½¾ù¾ø¶ÔÎó²î£¨MAE£©£º',num2str(mae)])
+disp(['å¹³å‡ç»å¯¹è¯¯å·®ï¼ˆMAEï¼‰ï¼š',num2str(mae)])
 
 mape=mean(abs((true_value-predict_value)./true_value));
-disp(['Æ½¾ùÏà¶Ô°Ù·ÖÎó²î£¨MAPE£©£º',num2str(mape*100),'%'])
+disp(['å¹³å‡ç›¸å¯¹ç™¾åˆ†è¯¯å·®ï¼ˆMAPEï¼‰ï¼š',num2str(mape*100),'%'])
 [r2 ,rmse] =r2_rmse(true_value,predict_value);
-disp(['ÄâºÏÓÅ¶È£¨r2£©£º',num2str(r2),'%'])
+disp(['æ‹Ÿåˆä¼˜åº¦ï¼ˆr2ï¼‰ï¼š',num2str(r2),'%'])
 fprintf('\n')
 
 %
@@ -78,17 +78,17 @@ figure
 plot(true_value,'-s','Color',[0 0 255]./255,'linewidth',1,'Markersize',5,'MarkerFaceColor',[0 0 255]./255)
 hold on
 plot(predict_value,'-o','Color',[0 0 0]./255,'linewidth',0.8,'Markersize',4,'MarkerFaceColor',[0 0 0]./255)
-legend('Êµ¼ÊÖµ','Ô¤²âÖµ')
+legend('å®é™…å€¼','é¢„æµ‹å€¼')
 grid on
-title('SSA-LSTMÄ£ĞÍÔ¤²â½á¹û')
-legend('ÕæÊµÖµ','Ô¤²âÖµ')
-xlabel('Ñù±¾')
-ylabel('Ô¤²âÖµ')
+title('SSA-LSTMæ¨¡å‹é¢„æµ‹ç»“æœ')
+legend('çœŸå®å€¼','é¢„æµ‹å€¼')
+xlabel('æ ·æœ¬')
+ylabel('é¢„æµ‹å€¼')
 
 figure
 bar((predict_value - true_value))   
-legend('SSA-LSTMÄ£ĞÍ²âÊÔ¼¯Îó²î')
-title('SSA-LSTMÄ£ĞÍ²âÊÔ¼¯Îó²î')
-ylabel('Îó²î','fontsize',10)
-xlabel('Ñù±¾','fontsize',10)
+legend('SSA-LSTMæ¨¡å‹æµ‹è¯•é›†è¯¯å·®')
+title('SSA-LSTMæ¨¡å‹æµ‹è¯•é›†è¯¯å·®')
+ylabel('è¯¯å·®','fontsize',10)
+xlabel('æ ·æœ¬','fontsize',10)
 
