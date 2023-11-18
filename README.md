@@ -1,1 +1,1 @@
-This program is used to predict the dynamic displacement of landslide.
+This code is used to predict the dynamic displacement of landslide.
