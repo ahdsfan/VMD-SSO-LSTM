@@ -1,1 +1,1 @@
-Dynamic Landslide Displacement Prediction Model ：A Variational Mode Decomposition-based SSO-LSTM Approach
+This program is used to predict the dynamic displacement of landslide
